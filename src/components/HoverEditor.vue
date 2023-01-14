@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Toolbar from './Toolbar.vue';
-import { store } from '../plugin/store'
+import { useStore } from '../composables/useStore'
+
 
 const editButtonTop = ref('0')
 const editButtonLeft = ref('0')
+const { store } = useStore()
 
 const findParentBlockElement = (el: HTMLElement): HTMLElement | undefined => {
   const parent = el.parentElement

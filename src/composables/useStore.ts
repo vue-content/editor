@@ -1,10 +1,14 @@
 import { reactive } from "vue";
 
-interface Store {
+export interface Store {
     editMode: boolean
     activeElement?: HTMLElement
 }
 
-export const store = reactive<Store>({
+const store = reactive<Store>({
     editMode: false,
+})
+
+export const useStore = () => ({
+    store
 })

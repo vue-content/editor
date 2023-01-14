@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { inject, ref, Teleport } from 'vue'
-import { store } from '../plugin/store'
+import { useStore } from '../composables/useStore'
 
 const editButton = ref(null)
+const { store } = useStore()
 
 const props = defineProps<{ 
     x: string
