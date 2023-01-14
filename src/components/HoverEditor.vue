@@ -7,18 +7,6 @@ import { useStore } from '../composables/useStore'
 const editButtonTop = ref('0')
 const editButtonLeft = ref('0')
 const { store } = useStore()
-
-const findParentBlockElement = (el: HTMLElement): HTMLElement | undefined => {
-  const parent = el.parentElement
-  const id = el.dataset.contentBlock
-  if (id) {
-    return el
-  }
-  if (parent) {
-    return findParentBlockElement(parent)
-  }
-}
-
 const editableSelector = "[data-content-block], [data-content-html], [data-content-text]"
 
 onMounted(() => {
@@ -28,9 +16,7 @@ onMounted(() => {
       if ((e as MouseEvent).shiftKey || store.editMode) {
         return
       }
-      store.activeElement = (e.target as HTMLElement).matches(editableSelector)
-        ? e.target as HTMLElement
-        : findParentBlockElement(e.target as HTMLElement)
+      store.activeElement = (e.target as HTMLElement).closest(editableSelector) as HTMLElement
       if (!store.activeElement) {
         return
       }
