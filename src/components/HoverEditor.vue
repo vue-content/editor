@@ -39,8 +39,8 @@ onMounted(() => {
       store.activeElement.classList.add("hovered")
       const boundaries = store.activeElement.getBoundingClientRect()
       const bodyBoundaries = document.body.getBoundingClientRect()
-      editButtonTop.value = `${boundaries.top - bodyBoundaries.top - 35}px`
-      editButtonLeft.value = `${boundaries.left - bodyBoundaries.left + 10}px`
+      editButtonTop.value = `${boundaries.top - bodyBoundaries.top - 43}px`
+      editButtonLeft.value = `${boundaries.left - bodyBoundaries.left}px`
     })
   })
 })
