@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { inject, ref, Teleport } from 'vue'
+import { ref, Teleport } from 'vue'
 import { useStore } from '../composables/useStore'
+import { useVueContentEditor } from '../composables/useVueContentEditor';
 
 const editButton = ref(null)
 const { store } = useStore()
@@ -10,18 +11,30 @@ const props = defineProps<{
     y: string
 }>()
 
-const log = () => console.log(store.activeElement)
+const { enterEditMode, exitEditMode } = useVueContentEditor()
+const toggleEditMode = () => {
+  store.editMode
+    ? exitEditMode()
+    : enterEditMode()
+}
+
 </script>
 
 <template>
   <Teleport to="body">
-    <button ref="editButton" class="edit-button" @click="log">Edit</button>
+    <div id="vue-content-toolbar">
+      <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
+      <div id="ql-toolbar-container"></div>
+    </div>
   </Teleport>
 </template>
 
 <style>
+@import "../assets/quill.snow.css";
 
-.edit-button {
+#vue-content-toolbar {
+  display: flex;
+  background: white;
   box-shadow: 0 0 5px #123456ae;
   position: absolute;
   left: v-bind(x);
