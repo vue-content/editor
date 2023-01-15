@@ -1,6 +1,5 @@
-import { generate } from '@vue/compiler-core'
 import Quill from 'quill'
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore } from './useStore'
 
 const { store } = useStore()
@@ -39,48 +38,67 @@ const formats = {
 
 type Tag = keyof typeof buttons
 
-const generateToolbarOptions = (tags: Tag[]) => {
-    return tags.map(tag => buttons[tag])
+const isTag = (tag: string): tag is Tag =>  buttons.hasOwnProperty(tag)
+
+const generateToolbarOptions = (tags: string[]) => {
+    return tags
+        .filter(isTag)
+        .map(tag => buttons[tag])
 }
 
-const generateFormats = (tags: Tag[]): string[] => {
+const generateFormats = (tags: string[]): string[] => {
     return tags
         .map(tag => Object.keys(formats).find(formatKey => formats[formatKey as keyof typeof formats].includes(tag)))
         .filter((format): format is string => !!format)
 }
-const isSingleLine = () => store.activeElement?.tagName !== "DIV" // TODO: make configurable
+
+const findClosestBlock = (el: HTMLElement) => {
+    const blockElement: HTMLElement | null = el.closest("[data-content-block]")
+    const id = blockElement?.dataset.contentBlock
+    console.log(id)
+    const block = store.contentSource?.readBlock({ id })
+    return block
+}
 
 export const useVueContentEditor = () => {
     const enterEditMode = () => {
-        if (!store.activeElement) {
+        const field = store.activeElement?.dataset.contentHtml
+        if (!store.activeElement || !field || !store.contentSource) {
+            console.error("No active element or field")
             return
         }
         store.editMode = true
+        const block = findClosestBlock(store.activeElement)
+        if (!block) {
+            console.error("Found no parent block")
+            return
+        }
+        const singleLine = block.fieldSettings[field].singleLine
 
-        const Block = Quill.import('blots/block')
-        Block.tagName = isSingleLine() ? 'SPAN' : 'P'
-        Quill.register(Block, true)
+        const quillBlock = Quill.import('blots/block')
+        quillBlock.tagName = singleLine ? 'SPAN' : 'P'
+        Quill.register(quillBlock, true)
 
+        const tags = block.fieldSettings[field].tags
         const editor = new Quill(store.activeElement, {
             theme: "snow",
             modules: {
-                // toolbar: generateToolbarOptions(tags as Tag[])
+                toolbar: generateToolbarOptions(tags)
             },
-            // formats: generateFormats(tags as Tag[])
+            formats: generateFormats(tags)
         })
         const toolbar = editor.getModule("toolbar").container
-        // toolbar.style.display = "none"
         document.querySelector("#ql-toolbar-container")?.append(toolbar)
-        // editor.on("selection-change", () => toolbar.style.display = editor.hasFocus() ? "block" : "none")
     }
 
     const exitEditMode = () => {
         store.editMode = false
-        if (!store.activeElement) {
+        const field = store.activeElement?.dataset.contentHtml
+        if (!store.activeElement || !field) {
             return
         }
-        const selector = isSingleLine() ? ".ql-editor span" : ".ql-editor"
-        const html = store.activeElement.querySelector(selector)?.innerHTML ?? ''
+        const container = store.activeElement.querySelector(".ql-editor span") ?? store.activeElement.querySelector(".ql-editor")
+        const html = container?.innerHTML ?? ''
         store.activeElement.innerHTML = html
         store.activeElement.classList.remove("ql-container", "ql-snow")
         document.querySelector("#ql-toolbar-container")!.innerHTML = ""

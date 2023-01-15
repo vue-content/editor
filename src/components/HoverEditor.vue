@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import Toolbar from './Toolbar.vue';
 import { useStore } from '../composables/useStore'
 
@@ -7,6 +7,7 @@ import { useStore } from '../composables/useStore'
 const editButtonTop = ref('0')
 const editButtonLeft = ref('0')
 const { store } = useStore()
+store.contentSource = inject("content-source")
 const editableSelector = "[data-content-block], [data-content-html], [data-content-text]"
 
 onMounted(() => {
