@@ -60,6 +60,12 @@ const findClosestBlock = (el: HTMLElement) => {
     return block
 }
 
+const setQuillBlock = (singleLine: boolean) => {
+    const quillBlock = Quill.import('blots/block')
+    quillBlock.tagName = singleLine ? 'SPAN' : 'P'
+    Quill.register(quillBlock, true)
+}
+
 export const useVueContentEditor = () => {
     const enterEditMode = () => {
         const field = store.activeElement?.dataset.contentField
@@ -74,10 +80,7 @@ export const useVueContentEditor = () => {
             return
         }
         const singleLine = block.fieldSettings[field].singleLine
-
-        const quillBlock = Quill.import('blots/block')
-        quillBlock.tagName = singleLine ? 'SPAN' : 'P'
-        Quill.register(quillBlock, true)
+        setQuillBlock(singleLine)
 
         const tags = block.fieldSettings[field].tags
         const editor = new Quill(store.activeElement, {
