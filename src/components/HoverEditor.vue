@@ -8,7 +8,7 @@ const editButtonTop = ref('0')
 const editButtonLeft = ref('0')
 const { store } = useStore()
 store.contentSource = inject("content-source")
-const editableSelector = "[data-content-block], [data-content-html], [data-content-text]"
+const editableSelector = "[data-content-block], [data-content-field]"
 
 onMounted(() => {
   document.body.style.position = "relative";

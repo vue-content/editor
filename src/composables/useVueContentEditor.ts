@@ -62,7 +62,7 @@ const findClosestBlock = (el: HTMLElement) => {
 
 export const useVueContentEditor = () => {
     const enterEditMode = () => {
-        const field = store.activeElement?.dataset.contentHtml
+        const field = store.activeElement?.dataset.contentField
         if (!store.activeElement || !field || !store.contentSource) {
             console.error("No active element or field")
             return
@@ -93,7 +93,7 @@ export const useVueContentEditor = () => {
 
     const exitEditMode = () => {
         store.editMode = false
-        const field = store.activeElement?.dataset.contentHtml
+        const field = store.activeElement?.dataset.contentField
         if (!store.activeElement || !field) {
             return
         }
