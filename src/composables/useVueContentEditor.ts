@@ -1,6 +1,8 @@
 import Quill from 'quill'
 import { ref } from 'vue'
 import { useStore } from './useStore'
+import { sanitize } from '../../../core/src/utils/sanitize'
+import { replaceVariables } from '../../../core/src/utils/replaceVariables'
 
 const { store } = useStore()
 
@@ -55,7 +57,7 @@ const generateFormats = (tags: string[]): string[] => {
 const findClosestBlock = (el: HTMLElement) => {
     const blockElement: HTMLElement | null = el.closest("[data-content-block]")
     const id = blockElement?.dataset.contentBlock
-    console.log(id)
+    // console.log(id)
     const block = store.contentSource?.readBlock({ id })
     return block
 }
@@ -83,6 +85,7 @@ export const useVueContentEditor = () => {
         setQuillBlock(singleLine)
 
         const tags = block.fieldSettings[field].tags
+        store.activeElement.innerHTML = sanitize(block.rawField(field), { tags })
         const editor = new Quill(store.activeElement, {
             theme: "snow",
             modules: {
@@ -100,9 +103,16 @@ export const useVueContentEditor = () => {
         if (!store.activeElement || !field) {
             return
         }
+        const block = findClosestBlock(store.activeElement)
+        if (!block) {
+            console.error("Found no parent block")
+            return
+        }
         const container = store.activeElement.querySelector(".ql-editor span") ?? store.activeElement.querySelector(".ql-editor")
-        const html = container?.innerHTML ?? ''
-        store.activeElement.innerHTML = html
+        const html = sanitize(container?.innerHTML ?? '', { tags: block.fieldSettings[field].tags })
+        block.setField(field, html)
+        store.contentSource?.updateBlock(block)
+        store.activeElement.innerHTML = replaceVariables(html, block.fieldSettings[field].variables)
         store.activeElement.classList.remove("ql-container", "ql-snow")
         document.querySelector("#ql-toolbar-container")!.innerHTML = ""
     }
