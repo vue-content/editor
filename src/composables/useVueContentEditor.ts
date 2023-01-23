@@ -1,8 +1,7 @@
 import Quill from 'quill'
 import { ref } from 'vue'
 import { useStore } from './useStore'
-import { sanitize } from '../../../core/src/utils/sanitize'
-import { replaceVariables } from '../../../core/src/utils/replaceVariables'
+import { sanitize, replaceVariables } from '@vue-content/core'
 
 const { store } = useStore()
 

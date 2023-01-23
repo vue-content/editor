@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { ContentSource } from "../../../core/src/plugin/ContentSource";
+import { ContentSource } from "@vue-content/core";
 
 export interface Store {
     editMode: boolean
