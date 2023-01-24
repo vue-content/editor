@@ -97,11 +97,11 @@ export const useVueContentEditor = () => {
     }
 
     const exitEditMode = () => {
-        store.editMode = false
         const field = store.activeElement?.dataset.contentField
-        if (!store.activeElement || !field) {
+        if (!store.activeElement || !field || !store.editMode) {
             return
         }
+        store.editMode = false
         const block = findClosestBlock(store.activeElement)
         if (!block) {
             console.error("Found no parent block")
@@ -113,7 +113,10 @@ export const useVueContentEditor = () => {
         store.contentSource?.updateBlock(block)
         store.activeElement.innerHTML = replaceVariables(html, block.fieldSettings[field].variables)
         store.activeElement.classList.remove("ql-container", "ql-snow")
-        document.querySelector("#ql-toolbar-container")!.innerHTML = ""
+        const toolbarContainer = document.querySelector("#ql-toolbar-container")
+        if (toolbarContainer) {
+            toolbarContainer.innerHTML = ""
+        }
     }
 
     const editMode = ref(false)

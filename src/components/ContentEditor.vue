@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, inject } from 'vue';
+import { ref, onMounted, inject, onUnmounted } from 'vue';
 import Toolbar from './Toolbar.vue';
 import { useStore } from '../composables/useStore'
+import { useVueContentEditor } from '../composables/useVueContentEditor';
 
 
 const editButtonTop = ref('0')
@@ -10,26 +11,39 @@ const { store } = useStore()
 store.contentSource = inject("content-source")
 const editableSelector = "[data-content-block], [data-content-field]"
 
+const { exitEditMode } = useVueContentEditor()
+
+const mouseOverHandler = (e: Event) => {
+  if ((e as MouseEvent).shiftKey || store.editMode) {
+    return
+  }
+  store.activeElement = (e.target as HTMLElement).closest(editableSelector) as HTMLElement
+  if (!store.activeElement) {
+    return
+  }
+  e.stopPropagation()
+  document.querySelectorAll(".hovered").forEach(hov => hov.classList.remove("hovered"));
+  store.activeElement.classList.add("hovered")
+  const boundaries = store.activeElement.getBoundingClientRect()
+  const bodyBoundaries = document.body.getBoundingClientRect()
+  editButtonTop.value = `${boundaries.top - bodyBoundaries.top - 43}px`
+  editButtonLeft.value = `${boundaries.left - bodyBoundaries.left}px`
+}
+
 onMounted(() => {
   document.body.style.position = "relative";
   document.querySelectorAll(editableSelector).forEach(el => {
-    el.addEventListener('mouseover', (e) => { 
-      if ((e as MouseEvent).shiftKey || store.editMode) {
-        return
-      }
-      store.activeElement = (e.target as HTMLElement).closest(editableSelector) as HTMLElement
-      if (!store.activeElement) {
-        return
-      }
-      e.stopPropagation()
-      document.querySelectorAll(".hovered").forEach(hov => hov.classList.remove("hovered"));
-      store.activeElement.classList.add("hovered")
-      const boundaries = store.activeElement.getBoundingClientRect()
-      const bodyBoundaries = document.body.getBoundingClientRect()
-      editButtonTop.value = `${boundaries.top - bodyBoundaries.top - 43}px`
-      editButtonLeft.value = `${boundaries.left - bodyBoundaries.left}px`
-    })
+    el.addEventListener('mouseover', mouseOverHandler)
   })
+})
+
+onUnmounted(() => {
+  document.querySelectorAll(editableSelector).forEach(el => {
+    el.removeEventListener('mouseover', mouseOverHandler)
+  })
+  document.querySelectorAll(".hovered").forEach(hov => hov.classList.remove("hovered"));
+  exitEditMode()
+  store.activeElement = undefined
 })
 </script>
 
