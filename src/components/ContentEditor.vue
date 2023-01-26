@@ -22,8 +22,8 @@ const mouseOverHandler = (e: Event) => {
     return
   }
   e.stopPropagation()
-  document.querySelectorAll(".hovered").forEach(hov => hov.classList.remove("hovered"));
-  store.activeElement.classList.add("hovered")
+  document.querySelectorAll(".vue-content-hovered").forEach(hov => hov.classList.remove("vue-content-hovered"));
+  store.activeElement.classList.add("vue-content-hovered")
   const boundaries = store.activeElement.getBoundingClientRect()
   const bodyBoundaries = document.body.getBoundingClientRect()
   editButtonTop.value = `${boundaries.top - bodyBoundaries.top - 43}px`
@@ -41,7 +41,7 @@ onUnmounted(() => {
   document.querySelectorAll(editableSelector).forEach(el => {
     el.removeEventListener('mouseover', mouseOverHandler)
   })
-  document.querySelectorAll(".hovered").forEach(hov => hov.classList.remove("hovered"));
+  document.querySelectorAll(".vue-content-hovered").forEach(hov => hov.classList.remove("vue-content-hovered"));
   exitEditMode()
   store.activeElement = undefined
 })
@@ -53,7 +53,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 
-.hovered {
+.vue-content-hovered {
   box-shadow: 0 0 20px #123456;
   transition: box-shadow 0.3s;
 }
