@@ -224,6 +224,7 @@
   }
   .ql-snow .ql-editor {
     outline: none;
+    cursor: text !important;
   }
   .ql-snow .ql-editor pre.ql-syntax {
     background-color: #23241f;

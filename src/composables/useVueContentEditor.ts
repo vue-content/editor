@@ -67,6 +67,20 @@ const setQuillBlock = (singleLine: boolean) => {
     Quill.register(quillBlock, true)
 }
 
+const toggleEventPropagation = (el: HTMLElement, enable: boolean) => {
+    const events = ['click', 'mousedown', 'mouseover', 'mouseup', 'input', 'change', 'keyup', 'keydown', 'selectionchange']
+    const handler = (e: Event) => {
+        if (e.type === 'keyup') {
+            e.preventDefault() // Prevent space to send click event
+        }
+        e.stopPropagation()
+    }
+    events.forEach(event => enable
+        ? el.removeEventListener(event, handler)
+        : el.addEventListener(event, handler)
+    )
+}
+
 export const useVueContentEditor = () => {
     const enterEditMode = () => {
         const field = store.activeElement?.dataset.contentField
@@ -92,6 +106,7 @@ export const useVueContentEditor = () => {
             },
             formats: generateFormats(tags)
         })
+        toggleEventPropagation(document.querySelector('.ql-editor') as HTMLElement, false)
         const toolbar = editor.getModule("toolbar").container
         document.querySelector("#ql-toolbar-container")?.append(toolbar)
     }
@@ -107,6 +122,7 @@ export const useVueContentEditor = () => {
             console.error("Found no parent block")
             return
         }
+        toggleEventPropagation(document.querySelector('.ql-editor') as HTMLElement, true)
         const container = store.activeElement.querySelector(".ql-editor span") ?? store.activeElement.querySelector(".ql-editor")
         const html = sanitize(container?.innerHTML ?? '', { tags: block.fieldSettings[field].tags })
         block.setField(field, html)
