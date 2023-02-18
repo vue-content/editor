@@ -2,6 +2,7 @@
 import { ref, Teleport } from 'vue'
 import { useStore } from '../composables/useStore'
 import { useVueContentEditor } from '../composables/useVueContentEditor';
+import Drawer from './Drawer.vue';
 
 const editButton = ref(null)
 const { store } = useStore()
@@ -25,6 +26,7 @@ const toggleEditMode = () => {
     <div id="vue-content-toolbar">
       <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
       <div id="ql-toolbar-container"></div>
+      <Drawer />
     </div>
   </Teleport>
 </template>
