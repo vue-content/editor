@@ -1,18 +1,30 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { NDrawer, NDrawerContent } from 'naive-ui'
   
 const openDrawer = ref(false)
+const width = ref(300)
+ watchEffect(() => {
+    openDrawer.value
+        ? document.body.style.marginRight = `${width.value}px`
+        : document.body.style.marginRight = "0px"
+ })
+
 </script>
 
 <template>
     <button @click="openDrawer = !openDrawer">
-        Edit
+        More
     </button>
-    <n-drawer v-model:show="openDrawer" :width="502" placement="right">
-      <n-drawer-content title="Stoner">
-        Stoner is a 1965 novel by the American writer John Williams.
-      </n-drawer-content>
-    </n-drawer>
-  </template>
-  
+    <NDrawer v-model:show="openDrawer" :width="width" placement="right" :show-mask="false" :mask-closable="false" resizable :on-update-width="w => width = w">
+      <NDrawerContent title="Content editor" closable>
+        Here is your content
+      </NDrawerContent>
+    </NDrawer>
+</template>
+
+<style>
+body {
+    transition: margin-right 0.3s;
+}
+</style>

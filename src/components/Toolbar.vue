@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NConfigProvider } from 'naive-ui';
 import { ref, Teleport } from 'vue'
 import { useStore } from '../composables/useStore'
 import { useVueContentEditor } from '../composables/useVueContentEditor';
@@ -24,9 +25,11 @@ const toggleEditMode = () => {
 <template>
   <Teleport to="body">
     <div id="vue-content-toolbar">
-      <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
-      <div id="ql-toolbar-container"></div>
-      <Drawer />
+      <NConfigProvider preflight-style-disabled>
+        <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
+        <div id="ql-toolbar-container"></div>
+        <Drawer />
+      </NConfigProvider>
     </div>
   </Teleport>
 </template>
