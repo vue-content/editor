@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, watchEffect } from 'vue'
-import { NDrawer, NDrawerContent } from 'naive-ui'
 import { useWindowSize } from '@vueuse/core'
 import { useStore } from '../composables/useStore';
   
@@ -25,7 +24,7 @@ onBeforeUnmount(() => {
     <button @click="store.openDrawer = !store.openDrawer">
         More
     </button>
-    <NDrawer
+    <n-drawer
         v-model:show="store.openDrawer"
         :width="store.drawerWidth"
         placement="right"
@@ -35,10 +34,10 @@ onBeforeUnmount(() => {
         :trap-focus="false"
         :on-update-width="w => store.drawerWidth = w"
     >
-      <NDrawerContent title="Content editor" closable>
+      <n-drawer-content title="Content editor" closable>
         Here is your content
-      </NDrawerContent>
-    </NDrawer>
+      </n-drawer-content>
+    </n-drawer>
 </template>
 
 <style>
