@@ -2,6 +2,8 @@
 import { onBeforeUnmount, watchEffect } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useStore } from '../composables/useStore';
+import BlockForm from './BlockForm.vue'
+import Breadcrumbs from './Breadcrumbs.vue';
   
 const { width: windowWidth } = useWindowSize()
 const { store } = useStore()
@@ -32,10 +34,12 @@ onBeforeUnmount(() => {
         :mask-closable="false"
         resizable
         :trap-focus="false"
-        :on-update-width="w => store.drawerWidth = w"
+        :on-update-width="(w: number) => store.drawerWidth = w"
     >
       <n-drawer-content title="Content editor" closable>
-        Here is your content
+        <Breadcrumbs />
+        <n-divider />
+        <BlockForm />
       </n-drawer-content>
     </n-drawer>
 </template>
