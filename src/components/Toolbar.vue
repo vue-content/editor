@@ -25,9 +25,11 @@ const toggleEditMode = () => {
   <Teleport to="body">
     <div id="vue-content-toolbar">
       <n-config-provider preflight-style-disabled>
-        <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
-        <div id="ql-toolbar-container"></div>
-        <Drawer />
+        <n-space horizontal>
+          <button ref="editButton" class="edit-button" @click="toggleEditMode">Edit</button>
+          <div id="ql-toolbar-container"></div>
+          <Drawer />
+        </n-space>
       </n-config-provider>
     </div>
   </Teleport>
