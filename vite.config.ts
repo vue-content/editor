@@ -20,7 +20,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'VueContent',
-      fileName: "editor"
+      fileName: 'editor'
     },
     rollupOptions: {
       external: ['vue'],
@@ -30,5 +30,5 @@ export default defineConfig({
         }
       }
     }
-  },
+  }
 })
