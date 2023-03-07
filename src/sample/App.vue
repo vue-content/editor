@@ -7,7 +7,6 @@ import {
   reactive,
   ref
 } from 'vue'
-import { Block, LocalizedInMemorySource } from '@vue-content/core'
 import { contentSource } from './content'
 
 const ContentEditor = defineAsyncComponent(async () => {
@@ -23,17 +22,12 @@ const count = ref(0)
 const doubleCount = computed(() => count.value * 2)
 const editMode = ref(false)
 
-const loading = ref(true)
-const rootBlock = ref<Block<unknown>>(undefined)
-contentSource.readBlock().then(block => {
-  rootBlock.value = block
-  loading.value = false
-})
+const { isReady, block } = contentSource.readBlock()
 </script>
 
 <template>
   <ContentBlock>
-    <span v-if="!loading">{{ rootBlock.title }}</span>
+    <span v-if="isReady">{{ block?.title }}</span>
     <h1 v-content-text:title></h1>
 
     <ContentBlock field="card" class="card">
