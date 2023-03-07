@@ -3,7 +3,7 @@ import { ContentSource, Block } from '@vue-content/core'
 
 export interface Breadcrumb {
   label: string
-  block: Block
+  block: Block<unknown>
 }
 
 export interface Store {
@@ -18,7 +18,7 @@ export interface Store {
 
 const store = reactive<Store>({
   editMode: false,
-  openDrawer: false,
+  openDrawer: true,
   breadcrumbs: [],
   drawerWidth: 300
 })

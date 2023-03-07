@@ -22,7 +22,7 @@
     "format": "prettier --ignore-path .gitignore --write --cache --parser typescript \"**/*.[tj]s?(x)\""
   },
   "dependencies": {
-    "@vue-content/core": "^0.0.2",
+    "@vue-content/core": "^0.1.0",
     "@vueuse/core": "^9.12.0",
     "primevue": "^3.23.0",
     "quill": "^1.3.7",

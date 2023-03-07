@@ -8,51 +8,50 @@ const { store } = useStore()
 const { contentSource } = useContent()
 
 const block = computed(() => store.activeBlock)
-const fieldKeys = computed(() => 
-    Object.keys(block.value?.fields ?? [])
-        .filter(f => !f.startsWith('$'))
+const fieldKeys = computed(() =>
+  Object.keys(block.value ?? []).filter(f => f !== '$blockMeta')
 )
 
-const pushBreadcrumb = (label: string, block: Block) => {
-    store.breadcrumbs.push({ label, block })
-    store.activeBlock = block
+const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
+  const block = await contentSource?.readBlock({
+    field,
+    parent
+  })
+  store.activeBlock = block
+  store.breadcrumbs.push({ label: field, block })
 }
 </script>
 
 <template>
-
   <n-space vertical>
     <n-form v-if="block">
-        <n-form-item v-for="key in fieldKeys" :path="key" :label="key">
-            <n-input 
-                v-if="block.fieldSettings[key]?.singleLine === false" 
-                v-model:value="block.fields[key]"
-                type="textarea"
-                placeholder=""
-            />
-            <n-button 
-                v-else-if="typeof block.fields[key] === 'object'" 
-                class="full-width-button" 
-                icon-placement="right"
-                @click="pushBreadcrumb(key, block?.fields[key] as Block)"
-            >
-                {{ key }}
-                <template #icon>
-                    <ChevronRight20Regular />
-                </template>
-            </n-button>
-            <n-input v-else v-model:value="block.fields[key]" type="text" />
-        </n-form-item>
-
+      <n-form-item v-for="field in fieldKeys" :path="field" :label="field">
+        <n-input
+          v-if="block.$blockMeta.fieldSettings[field]?.singleLine === false"
+          v-model:value="block[field]"
+          type="textarea"
+          placeholder=""
+        />
+        <n-button
+          v-else-if="typeof block[field] === 'object'"
+          class="full-width-button"
+          icon-placement="right"
+          @click="pushBreadcrumb(block, field)"
+        >
+          {{ field }}
+          <template #icon>
+            <ChevronRight20Regular />
+          </template>
+        </n-button>
+        <n-input v-else v-model:value="block[field]" type="text" />
+      </n-form-item>
     </n-form>
   </n-space>
-
 </template>
-
 
 <style scoped>
 .full-width-button {
-    width: 100%;
-    justify-content: space-between;
+  width: 100%;
+  justify-content: space-between;
 }
 </style>

@@ -1,24 +1,39 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, inject, ref } from 'vue';
-import { LocalizedInMemorySource } from '@vue-content/core';
-import { contentSource } from './content';
+import {
+  computed,
+  defineAsyncComponent,
+  inject,
+  onMounted,
+  reactive,
+  ref
+} from 'vue'
+import { Block, LocalizedInMemorySource } from '@vue-content/core'
+import { contentSource } from './content'
 
 const ContentEditor = defineAsyncComponent(async () => {
   // await import('@vue-content/editor/style.css')
-  const ContentEditor = await import('../components/ContentEditor.vue'); // This should be imported from '@vue-content/editor' in real apps
-  return ContentEditor;
-});
+  const ContentEditor = await import('../components/Drawer.vue') // This should be imported from '@vue-content/editor' in real apps
+  return ContentEditor
+})
 
-defineProps<{ msg: string }>();
-const contentSource = inject<LocalizedInMemorySource>('content-source')!;
+defineProps<{ msg: string }>()
+// const contentSource = inject<LocalizedInMemorySource>('content-source')!
 
-const count = ref(0);
-const doubleCount = computed(() => count.value * 2);
-const editMode = ref(false);
+const count = ref(0)
+const doubleCount = computed(() => count.value * 2)
+const editMode = ref(false)
+
+const loading = ref(true)
+const rootBlock = ref<Block<unknown>>(undefined)
+contentSource.readBlock().then(block => {
+  rootBlock.value = block
+  loading.value = false
+})
 </script>
 
 <template>
   <ContentBlock>
+    <span v-if="!loading">{{ rootBlock.title }}</span>
     <h1 v-content-text:title></h1>
 
     <ContentBlock field="card" class="card">
@@ -45,7 +60,7 @@ const editMode = ref(false);
     </button>
   </div>
   <button @click="editMode = !editMode">Toggle edit mode</button>
-  <ContentEditor v-if="editMode"></ContentEditor>
+  <ContentEditor v-if="editMode" @close="editMode = false"></ContentEditor>
 </template>
 
 <style scoped>

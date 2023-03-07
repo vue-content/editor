@@ -1,31 +1,38 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, watchEffect } from 'vue';
-import { useWindowSize } from '@vueuse/core';
-import { useStore } from '../composables/useStore';
-import BlockForm from './BlockForm.vue';
-import Breadcrumbs from './Breadcrumbs.vue';
+import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+import { useStore } from '../composables/useStore'
+import BlockForm from './BlockForm.vue'
+import Breadcrumbs from './Breadcrumbs.vue'
 
-const { width: windowWidth } = useWindowSize();
-const { store } = useStore();
-store.drawerWidth = Math.max(300, windowWidth.value / 3);
+const { width: windowWidth } = useWindowSize()
+const { store } = useStore()
+store.drawerWidth = Math.max(300, windowWidth.value / 3)
+const openDrawer = ref(false)
 watchEffect(() => {
   if (store.drawerWidth > windowWidth.value - 20) {
-    store.drawerWidth = windowWidth.value - 20;
+    store.drawerWidth = windowWidth.value - 20
   }
-  store.openDrawer
+  openDrawer
     ? (document.body.style.marginLeft = `${store.drawerWidth}px`)
-    : (document.body.style.marginLeft = '0px');
-});
+    : (document.body.style.marginLeft = '0px')
+})
 
-onBeforeUnmount(() => {
-  document.body.style.marginLeft = '0px';
-});
+onMounted(() => (openDrawer.value = true))
+const emit = defineEmits(['close'])
+
+const close = () => {
+  openDrawer.value = false
+  document.body.style.marginLeft = '0px'
+  emit('close')
+}
+
+onBeforeUnmount(close)
 </script>
 
 <template>
-  <button @click="store.openDrawer = !store.openDrawer">More</button>
   <n-drawer
-    v-model:show="store.openDrawer"
+    v-model:show="openDrawer"
     :width="store.drawerWidth"
     placement="left"
     :show-mask="false"
@@ -34,6 +41,7 @@ onBeforeUnmount(() => {
     :trap-focus="false"
     :block-scroll="false"
     :on-update-width="(w: number) => store.drawerWidth = w"
+    :on-after-leave="close"
   >
     <n-drawer-content title="Content editor" closable>
       <Breadcrumbs />
