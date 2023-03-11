@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import { useStore } from '../composables/useStore'
 import { ChevronRight20Regular } from '@vicons/fluent'
 import { Block, useContent } from '@vue-content/core'
+import { implementsLocalizedContentSource } from '../../../core/src/plugin/ContentSource'
+import { useHighlighter } from '../composables/useHighlighter'
 
 const { store } = useStore()
 const { contentSource } = useContent()
@@ -11,6 +13,8 @@ const block = computed(() => store.activeBlock)
 const fieldKeys = computed(() =>
   Object.keys(block.value ?? []).filter(f => f !== '$blockMeta')
 )
+
+const { highlightedField } = useHighlighter(block)
 
 const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
   const block = await contentSource?.readBlock({
@@ -31,6 +35,7 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
           v-model:value="block[field]"
           type="textarea"
           placeholder=""
+          @focus="highlightedField = field"
         />
         <n-button
           v-else-if="typeof block[field] === 'object'"
@@ -43,7 +48,12 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
             <ChevronRight20Regular />
           </template>
         </n-button>
-        <n-input v-else v-model:value="block[field]" type="text" />
+        <n-input 
+          v-else 
+          v-model:value="block[field]"
+          type="text" 
+          @focus="highlightedField = field"
+        />
       </n-form-item>
     </n-form>
   </n-space>
@@ -54,4 +64,16 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
   width: 100%;
   justify-content: space-between;
 }
+</style>
+
+<style lang="scss">
+
+.vue-content-highlight {
+  box-shadow: 0 0 20px #12345678;
+  transition: box-shadow 0.3s;
+  &[data-content-field] {
+    box-shadow: 0 0 20px #123456;
+  }
+}
+
 </style>

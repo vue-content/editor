@@ -4,6 +4,7 @@ import { useWindowSize } from '@vueuse/core'
 import { useStore } from '../composables/useStore'
 import BlockForm from './BlockForm.vue'
 import Breadcrumbs from './Breadcrumbs.vue'
+import Options from './Options.vue'
 
 const { width: windowWidth } = useWindowSize()
 const { store } = useStore()
@@ -44,6 +45,7 @@ onBeforeUnmount(close)
     :on-after-leave="close"
   >
     <n-drawer-content title="Content editor" closable>
+      <Options />
       <Breadcrumbs />
       <n-divider />
       <BlockForm />

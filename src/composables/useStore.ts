@@ -10,7 +10,8 @@ export interface Store {
   editMode: boolean
   openDrawer: boolean
   activeElement?: HTMLElement
-  activeBlock?: Block
+  activeBlock?: Block<unknown>
+  highlightActive: boolean
   contentSource?: ContentSource
   breadcrumbs: Breadcrumb[]
   drawerWidth: number
@@ -20,7 +21,8 @@ const store = reactive<Store>({
   editMode: false,
   openDrawer: true,
   breadcrumbs: [],
-  drawerWidth: 300
+  drawerWidth: 300,
+  highlightActive: true
 })
 
 export const useStore = () => ({
