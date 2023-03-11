@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from '../composables/useStore'
 import { ChevronRight20Regular } from '@vicons/fluent'
 import { Block, useContent } from '@vue-content/core'
@@ -24,6 +24,11 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
   store.activeBlock = block
   store.breadcrumbs.push({ label: field, block })
 }
+
+if (implementsLocalizedContentSource(contentSource))(
+  watch(contentSource.localeRef, async () => store.activeBlock = await contentSource?.readBlock({ id: block.value?.$blockMeta.id }))
+)
+
 </script>
 
 <template>
