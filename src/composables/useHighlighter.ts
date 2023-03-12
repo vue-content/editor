@@ -25,13 +25,15 @@ export function useHighlighter<T>(
       `[data-content-block="${highlightedBlock.value}"]`
     )
     blockElements.forEach(blockElement => {
-      blockElement.classList.add('vue-content-highlight')
       const fieldElements = blockElement.querySelectorAll(
         `[data-content-field="${highlightedField.value}"]`
       )
       fieldElements.forEach(fieldElement => {
         fieldElement.classList.add('vue-content-highlight')
       })
+      if (fieldElements.length === 0) {
+        blockElement.classList.add('vue-content-highlight')
+      }
     })
   })
 

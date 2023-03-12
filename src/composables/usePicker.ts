@@ -1,4 +1,4 @@
-import { watchEffect, inject } from 'vue'
+import { watchEffect, inject, nextTick } from 'vue'
 import { useStore, Breadcrumb } from './useStore'
 import { ElementPicker } from 'pick-dom-element'
 import { ContentSource } from '@vue-content/core'
@@ -6,8 +6,8 @@ import { ContentSource } from '@vue-content/core'
 const { store } = useStore()
 
 const style = {
-  background: 'rgba(153, 235, 255, 0.2)',
-  borderColor: 'yellow'
+  background: 'rgba(54, 173, 106, 0.1)',
+  borderColor: '#36ad6a'
 }
 
 async function setBreadcrumbs(contentSource: ContentSource, el: HTMLElement) {
@@ -34,6 +34,18 @@ async function setBreadcrumbs(contentSource: ContentSource, el: HTMLElement) {
 
   store.breadcrumbs = breadcrumbs
   store.activeBlock = block
+
+  const field = el.dataset?.contentField
+  if (field) {
+    nextTick(() => {
+      document
+        .querySelector<HTMLElement>(
+          `.content-block-form [data-content-field-input="${field}"] input,
+          .content-block-form [data-content-field-input="${field}"] textarea`
+        )
+        ?.focus()
+    })
+  }
 }
 
 export function usePicker() {

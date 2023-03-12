@@ -25,20 +25,25 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
   store.breadcrumbs.push({ label: field, block })
 }
 
-if (implementsLocalizedContentSource(contentSource))(
-  watch(contentSource.localeRef, async () => store.activeBlock = await contentSource?.readBlock({ id: block.value?.$blockMeta.id }))
-)
-
+if (implementsLocalizedContentSource(contentSource))
+  watch(
+    contentSource.localeRef,
+    async () =>
+      (store.activeBlock = await contentSource?.readBlock({
+        id: block.value?.$blockMeta.id
+      }))
+  )
 </script>
 
 <template>
   <n-space vertical>
-    <n-form v-if="block">
+    <n-form v-if="block" class="content-block-form">
       <n-form-item v-for="field in fieldKeys" :path="field" :label="field">
         <n-input
           v-if="block.$blockMeta.fieldSettings[field]?.singleLine === false"
           v-model:value="block[field]"
           type="textarea"
+          :data-content-field-input="field"
           placeholder=""
           @focus="highlightedField = field"
         />
@@ -53,10 +58,11 @@ if (implementsLocalizedContentSource(contentSource))(
             <ChevronRight20Regular />
           </template>
         </n-button>
-        <n-input 
-          v-else 
+        <n-input
+          v-else
           v-model:value="block[field]"
-          type="text" 
+          type="text"
+          :data-content-field-input="field"
           @focus="highlightedField = field"
         />
       </n-form-item>
@@ -72,7 +78,6 @@ if (implementsLocalizedContentSource(contentSource))(
 </style>
 
 <style lang="scss">
-
 .vue-content-highlight {
   box-shadow: 0 0 20px #12345678;
   transition: box-shadow 0.3s;
@@ -80,5 +85,4 @@ if (implementsLocalizedContentSource(contentSource))(
     box-shadow: 0 0 20px #123456;
   }
 }
-
 </style>
