@@ -1,4 +1,5 @@
 import { Block } from '@vue-content/core'
+import { useActiveElement } from '@vueuse/core'
 import { ref, ComputedRef, watchEffect, watch } from 'vue'
 import { useStore } from './useStore'
 
@@ -8,12 +9,20 @@ export function useHighlighter<T>(
   activeBlock: ComputedRef<Block<T> | undefined>
 ) {
   const highlightedBlock = ref('')
-  const highlightedField = ref('')
+  const highlightedField = ref<string | undefined>('')
 
-  watch(highlightedBlock, () => (highlightedField.value = ''))
+  const activeElement = useActiveElement()
+
+  // watch(highlightedBlock, () => (highlightedField.value = ''))
 
   watchEffect(() => {
     highlightedBlock.value = String(activeBlock.value?.$blockMeta.id)
+    // const closestField = activeElement.value?.closest<HTMLElement>(
+    //   '[data-content-field-input], [data-content-field]'
+    // )
+    // highlightedField.value =
+    //   closestField?.dataset?.contentField ??
+    //   closestField?.dataset?.contentFieldInput
 
     document
       .querySelectorAll('.vue-content-highlight')

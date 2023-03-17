@@ -1,7 +1,7 @@
 import Quill from 'quill'
-import { ref } from 'vue'
+import { watchEffect } from 'vue'
 import { useStore } from './useStore'
-import { sanitize, replaceVariables } from '@vue-content/core'
+import { sanitize, replaceVariables, ContentSource } from '@vue-content/core'
 
 const { store } = useStore()
 
@@ -55,11 +55,10 @@ const generateFormats = (tags: string[]): string[] => {
     .filter((format): format is string => !!format)
 }
 
-const findClosestBlock = (el: HTMLElement) => {
+async function findClosestBlock(contentSource: ContentSource, el: HTMLElement) {
   const blockElement: HTMLElement | null = el.closest('[data-content-block]')
   const id = blockElement?.dataset.contentBlock
-  // console.log(id)
-  const block = store.contentSource?.readBlock({ id })
+  const block = await contentSource?.readBlock({ id })
   return block
 }
 
@@ -95,23 +94,27 @@ const toggleEventPropagation = (el: HTMLElement, enable: boolean) => {
 }
 
 export const useVueContentEditor = () => {
-  const enterEditMode = () => {
+  const enterEditMode = async (
+    contentSource: ContentSource,
+    el: HTMLElement
+  ) => {
+    store.activeElement = el
     const field = store.activeElement?.dataset.contentField
-    if (!store.activeElement || !field || !store.contentSource) {
-      console.error('No active element or field')
+    if (!store.activeElement || !field || !contentSource) {
+      console.error('No active element or field', contentSource)
       return
     }
     store.editMode = true
-    const block = findClosestBlock(store.activeElement)
+    const block = await findClosestBlock(contentSource, store.activeElement)
     if (!block) {
       console.error('Found no parent block')
       return
     }
-    const singleLine = block.fieldSettings[field].singleLine
+    const singleLine = block.$blockMeta.fieldSettings[field].singleLine
     setQuillBlock(singleLine)
 
-    const tags = block.fieldSettings[field].tags
-    store.activeElement.innerHTML = sanitize(block.rawField(field), { tags })
+    const tags = block.$blockMeta.fieldSettings[field].tags
+    store.activeElement.innerHTML = sanitize(block[field], { tags })
     const editor = new Quill(store.activeElement, {
       theme: 'snow',
       modules: {
@@ -124,47 +127,52 @@ export const useVueContentEditor = () => {
       false
     )
     const toolbar = editor.getModule('toolbar').container
-    document.querySelector('#ql-toolbar-container')?.append(toolbar)
+    document.querySelector('#ql-toolbar-container')?.replaceChildren(toolbar)
   }
 
-  const exitEditMode = () => {
+  const exitEditMode = async (saveChanges: boolean) => {
     const field = store.activeElement?.dataset.contentField
     if (!store.activeElement || !field || !store.editMode) {
       return
     }
     store.editMode = false
-    const block = findClosestBlock(store.activeElement)
+    const block = store.activeBlock
     if (!block) {
       console.error('Found no parent block')
       return
     }
-    toggleEventPropagation(
-      document.querySelector('.ql-editor') as HTMLElement,
-      true
-    )
-    const container =
-      store.activeElement.querySelector('.ql-editor span') ??
-      store.activeElement.querySelector('.ql-editor')
+    const editor = store.activeElement.querySelector<HTMLElement>('.ql-editor')
+    if (!editor) {
+      return
+    }
+    toggleEventPropagation(editor, true)
+    const container = editor.querySelector('.ql-editor span') ?? editor
     const html = sanitize(container?.innerHTML ?? '', {
-      tags: block.fieldSettings[field].tags
+      tags: block.$blockMeta.fieldSettings[field].tags
     })
-    block.setField(field, html)
-    store.contentSource?.updateBlock(block)
+    if (saveChanges) {
+      block[field] = html
+      // contentSource?.updateBlock(block) // TODO!!
+    }
     store.activeElement.innerHTML = replaceVariables(
-      html,
-      block.fieldSettings[field].variables
+      block[field],
+      block.$blockMeta.fieldSettings[field].variables
     )
     store.activeElement.classList.remove('ql-container', 'ql-snow')
-    const toolbarContainer = document.querySelector('#ql-toolbar-container')
-    if (toolbarContainer) {
-      toolbarContainer.innerHTML = ''
-    }
+    document.querySelector('#ql-toolbar-container')?.replaceChildren()
+    store.activeElement = undefined
   }
 
-  const editMode = ref(false)
+  watchEffect(() => {
+    if (store.editMode && store.pickerActive) {
+      exitEditMode(true)
+    }
+  })
+
   return {
-    editMode,
     enterEditMode,
-    exitEditMode
+    exitEditMode,
+    saveChanges: async () => exitEditMode(true),
+    discardChanges: async () => exitEditMode(false)
   }
 }

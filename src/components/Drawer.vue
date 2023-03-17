@@ -49,6 +49,7 @@ onBeforeUnmount(close)
       <Breadcrumbs />
       <n-divider />
       <BlockForm />
+      <Toolbar />
     </n-drawer-content>
   </n-drawer>
 </template>

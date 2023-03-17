@@ -2,8 +2,10 @@ import { watchEffect, inject, nextTick } from 'vue'
 import { useStore, Breadcrumb } from './useStore'
 import { ElementPicker } from 'pick-dom-element'
 import { ContentSource } from '@vue-content/core'
+import { useVueContentEditor } from './useVueContentEditor'
 
 const { store } = useStore()
+const { enterEditMode } = useVueContentEditor()
 
 const style = {
   background: 'rgba(54, 173, 106, 0.1)',
@@ -74,6 +76,9 @@ export function usePicker() {
           return
         }
         setBreadcrumbs(contentSource, el)
+        if (el.dataset?.contentField) {
+          enterEditMode(contentSource, el)
+        }
       },
       elementFilter: el => {
         const closestBlockOrField = el.closest(
