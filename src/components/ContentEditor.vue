@@ -60,7 +60,7 @@ onUnmounted(() => {
   document
     .querySelectorAll('.vue-content-hovered')
     .forEach(hov => hov.classList.remove('vue-content-hovered'))
-  exitEditMode()
+  exitEditMode(true)
   store.activeElement = undefined
 })
 </script>
