@@ -1,1 +1,1 @@
-export { default as ContentEditor } from './components/ContentEditor.vue'
+export { default as ContentEditor } from './components/Drawer.vue'
