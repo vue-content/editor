@@ -5,7 +5,8 @@ import { useStore } from '../composables/useStore'
 import BlockForm from './BlockForm.vue'
 import Breadcrumbs from './Breadcrumbs.vue'
 import Options from './Options.vue'
-import { NDrawer, NDrawerContent, NDivider } from 'naive-ui'
+import Toolbar from './Toolbar.vue'
+import { NConfigProvider, NDrawer, NDrawerContent, NDivider } from 'naive-ui'
 
 const { width: windowWidth } = useWindowSize()
 const { store } = useStore()
@@ -33,26 +34,28 @@ onBeforeUnmount(close)
 </script>
 
 <template>
-  <n-drawer
-    v-model:show="openDrawer"
-    :width="store.drawerWidth"
-    placement="left"
-    :show-mask="false"
-    :mask-closable="false"
-    resizable
-    :trap-focus="false"
-    :block-scroll="false"
-    :on-update-width="(w: number) => store.drawerWidth = w"
-    :on-after-leave="close"
-  >
-    <n-drawer-content title="Content editor" closable>
-      <Options />
-      <Breadcrumbs />
-      <n-divider />
-      <BlockForm />
-      <Toolbar />
-    </n-drawer-content>
-  </n-drawer>
+  <n-config-provider preflight-style-disabled>
+    <n-drawer
+      v-model:show="openDrawer"
+      :width="store.drawerWidth"
+      placement="left"
+      :show-mask="false"
+      :mask-closable="false"
+      resizable
+      :trap-focus="false"
+      :block-scroll="false"
+      :on-update-width="(w: number) => store.drawerWidth = w"
+      :on-after-leave="close"
+    >
+      <n-drawer-content title="Content editor" closable>
+        <Options />
+        <Breadcrumbs />
+        <n-divider />
+        <BlockForm />
+        <Toolbar />
+      </n-drawer-content>
+    </n-drawer>
+  </n-config-provider>
 </template>
 
 <style>
