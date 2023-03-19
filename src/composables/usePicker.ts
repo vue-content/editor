@@ -81,7 +81,7 @@ export function usePicker() {
         }
       },
       elementFilter: el => {
-        const closestBlockOrField = el.closest(
+        const closestBlockOrField = el.closest<HTMLElement>(
           '[data-content-block], [data-content-field]'
         )
         return closestBlockOrField ?? false

@@ -1,7 +1,12 @@
 import Quill from 'quill'
 import { watchEffect } from 'vue'
 import { useStore } from './useStore'
-import { sanitize, replaceVariables, ContentSource } from '@vue-content/core'
+import {
+  sanitize,
+  replaceVariables,
+  ContentSource,
+  UntypedBlock
+} from '@vue-content/core'
 
 const { store } = useStore()
 
@@ -136,7 +141,7 @@ export const useVueContentEditor = () => {
       return
     }
     store.editMode = false
-    const block = store.activeBlock
+    const block: UntypedBlock | undefined = store.activeBlock
     if (!block) {
       console.error('Found no parent block')
       return

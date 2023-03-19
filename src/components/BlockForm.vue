@@ -2,15 +2,19 @@
 import { ref, computed, watch } from 'vue'
 import { useStore } from '../composables/useStore'
 import { ChevronRight20Regular } from '@vicons/fluent'
-import { Block, useContent } from '@vue-content/core'
-import { implementsLocalizedContentSource } from '../../../core/src/plugin/ContentSource'
+import {
+  implementsLocalizedContentSource,
+  Block,
+  UntypedBlock,
+  useContent
+} from '@vue-content/core'
 import { useHighlighter } from '../composables/useHighlighter'
 import { NSpace, NForm, NFormItem, NButton, NInput } from 'naive-ui'
 
 const { store } = useStore()
 const { contentSource } = useContent()
 
-const block = computed(() => store.activeBlock)
+const block = computed<UntypedBlock | undefined>(() => store.activeBlock)
 const fieldKeys = computed(() =>
   Object.keys(block.value ?? []).filter(f => f !== '$blockMeta')
 )
@@ -26,7 +30,7 @@ const pushBreadcrumb = async (parent: Block<unknown>, field: string) => {
   store.breadcrumbs.push({ label: field, block })
 }
 
-if (implementsLocalizedContentSource(contentSource))
+if (implementsLocalizedContentSource(contentSource)) {
   watch(
     contentSource.localeRef,
     async () =>
@@ -34,6 +38,7 @@ if (implementsLocalizedContentSource(contentSource))
         id: block.value?.$blockMeta.id
       }))
   )
+}
 </script>
 
 <template>
