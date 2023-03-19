@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import {
   SelectAllOff24Regular,
   SelectAllOn24Regular,
   MyLocation24Regular
 } from '@vicons/fluent'
-import { useStore } from '../composables/useStore.ts'
+import { useStore } from '../composables/useStore'
 import { usePicker } from '../composables/usePicker'
 
 const { store } = useStore()
