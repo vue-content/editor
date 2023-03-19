@@ -22,7 +22,7 @@
     "format": "prettier --ignore-path .gitignore --write --cache --parser typescript \"**/*.[tj]s?(x)\""
   },
   "dependencies": {
-    "@vue-content/core": "^0.1.1",
+    "@vue-content/core": "^0.2.2",
     "@vueuse/core": "^9.12.0",
     "pick-dom-element": "github:vue-content/pick-dom-element",
     "quill": "^1.3.7",
