@@ -4,7 +4,7 @@ import { ref, Teleport, watchEffect } from 'vue'
 import { useStore } from '../composables/useStore'
 import { useVueContentEditor } from '../composables/useVueContentEditor'
 import { Save24Filled, DismissCircle24Filled } from '@vicons/fluent'
-import { NSpace, NConfigProvider, NIcon, NButton } from 'naive-ui'
+import { NSpace, NIcon, NButton, NDivider } from 'naive-ui'
 
 const { store } = useStore()
 
@@ -36,21 +36,26 @@ watchEffect(() => {
       id="vue-content-toolbar"
       v-if="store.activeElement && !store.pickerActive"
     >
-      <n-config-provider preflight-style-disabled>
-        <n-space horizontal align="center">
+      <n-space
+        horizontal
+        class="toolbar"
+        align="center"
+        justify="space-between"
+      >
+        <div id="ql-toolbar-container"></div>
+        <n-space horizontal class="save-buttons">
           <n-button text @click="saveChanges">
-            <n-icon size="24">
+            <n-icon size="20">
               <Save24Filled />
             </n-icon>
           </n-button>
           <n-button text @click="discardChanges">
-            <n-icon size="24">
+            <n-icon size="20">
               <DismissCircle24Filled />
             </n-icon>
           </n-button>
-          <div id="ql-toolbar-container"></div>
         </n-space>
-      </n-config-provider>
+      </n-space>
     </div>
   </Teleport>
 </template>
@@ -68,5 +73,14 @@ watchEffect(() => {
   left: v-bind(toolbarX);
   top: v-bind(toolbarY);
   /* transition: top 0.3s, left 0.3s, opacity 0.3s, width 0.3s; */
+}
+
+.toolbar {
+  width: 100%;
+}
+
+.save-buttons {
+  margin-right: 1em;
+  margin-top: 0.5em;
 }
 </style>
