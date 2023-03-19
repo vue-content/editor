@@ -4,6 +4,7 @@ import { ref, Teleport, watchEffect } from 'vue'
 import { useStore } from '../composables/useStore'
 import { useVueContentEditor } from '../composables/useVueContentEditor'
 import { Save24Filled, DismissCircle24Filled } from '@vicons/fluent'
+import { NSpace, NConfigProvider, NIcon, NButton } from 'naive-ui'
 
 const { store } = useStore()
 

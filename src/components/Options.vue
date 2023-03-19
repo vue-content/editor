@@ -6,6 +6,7 @@ import {
 } from '@vicons/fluent'
 import { useStore } from '../composables/useStore'
 import { usePicker } from '../composables/usePicker'
+import { NButton, NIcon, NSpace } from 'naive-ui'
 
 const { store } = useStore()
 usePicker()

@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { useStore } from '../composables/useStore'
 import { useContent } from '@vue-content/core'
+import { NBreadcrumb, NBreadcrumbItem } from 'naive-ui'
 
 const { contentSource } = useContent()
 const { store } = useStore()

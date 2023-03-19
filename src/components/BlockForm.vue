@@ -5,6 +5,7 @@ import { ChevronRight20Regular } from '@vicons/fluent'
 import { Block, useContent } from '@vue-content/core'
 import { implementsLocalizedContentSource } from '../../../core/src/plugin/ContentSource'
 import { useHighlighter } from '../composables/useHighlighter'
+import { NSpace, NForm, NFormItem, NButton, NInput } from 'naive-ui'
 
 const { store } = useStore()
 const { contentSource } = useContent()

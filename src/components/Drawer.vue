@@ -5,6 +5,7 @@ import { useStore } from '../composables/useStore'
 import BlockForm from './BlockForm.vue'
 import Breadcrumbs from './Breadcrumbs.vue'
 import Options from './Options.vue'
+import { NDrawer, NDrawerContent, NDivider } from 'naive-ui'
 
 const { width: windowWidth } = useWindowSize()
 const { store } = useStore()
